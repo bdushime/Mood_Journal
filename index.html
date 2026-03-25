@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Mood Journal</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>My Mood Journal</h1>
+            <p>Track your thoughts and feelings.</p>
+        </header>
+
+        <section class="form-section">
+            <form id="journal-form">
+                <input type="text" id="entry-title" placeholder="Title your thought..." required>
+                <textarea id="entry-content" placeholder="How are you feeling right now?" rows="4" required></textarea>
+                <select id="entry-mood" required>
+                    <option value="" disabled selected>Select your mood...</option>
+                    <option value="HAPPY">Happy 😁</option>
+                    <option value="SAD">Sad 😢</option>
+                    <option value="MOTIVATED">Motivated 🚀</option>
+                    <option value="STRESSED">Stressed 😫</option>
+                    <option value="CALM">Calm 😌</option>
+                </select>
+                <button type="submit">Save Entry</button>
+            </form>
+        </section>
+
+        <section class="filters">
+            <label for="filter-mood">Filter by Mood:</label>
+            <select id="filter-mood">
+                <option value="ALL">All Moods</option>
+                <option value="HAPPY">Happy 😁</option>
+                <option value="SAD">Sad 😢</option>
+                <option value="MOTIVATED">Motivated 🚀</option>
+                <option value="STRESSED">Stressed 😫</option>
+                <option value="CALM">Calm 😌</option>
+            </select>
+        </section>
+
+        <section class="entries-display" id="entries-list">
+            <!-- Entries will be dynamically rendered here by ui.ts -->
+        </section>
+    </div>
+
+    <!-- We load the compiled JS code (type="module" is essential for import/export ES6 structure) -->
+    <script type="module" src="./dist/ui.js"></script>
+</body>
+</html>
