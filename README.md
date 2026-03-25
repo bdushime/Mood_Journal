@@ -38,3 +38,5 @@ Or, if you are using VS Code, simply right-click `index.html` and select **"Open
 * `src/storage.ts`: Type-safe Data serialization mechanics.
 * `src/ui.ts`: Heavily typed DOM manipulation and Event Delegation.
 * `index.html` & `styles.css`: Custom, responsive UI architecture.
+
+## Deployed Link : https://genuine-moxie-618a02.netlify.app/
