@@ -1,6 +1,4 @@
 import { saveEntries, loadEntries } from "./storage.js";
-// Task 1: Data Typing and Modeling
-// ENUM allows us to restrict the valid options heavily reducing typo bugs.
 export var Mood;
 (function (Mood) {
     Mood["HAPPY"] = "HAPPY";
@@ -9,46 +7,82 @@ export var Mood;
     Mood["STRESSED"] = "STRESSED";
     Mood["CALM"] = "CALM";
 })(Mood || (Mood = {}));
-// State holding our current session notes
 export let currentJournal = [];
-// App Startup Initializer
 export function initializeJournal() {
     currentJournal = loadEntries();
 }
-// Task 2: Generic and Type-Safe Functionality
 /**
- * A highly reusable GENERIC function that safely finds an item in ANY array using a specific key/value.
- * Explaining to a Junior: "T" represents a generic shape. This function adapts to whatever shape 'list' is.
- * 'keyof T' guarantees that whatever 'key' you look for actually exists on the 'T' object type.
+ * Generic utility to find an item by a property within any typed array.
  */
 export function findByProperty(list, key, value) {
     return list.find(item => item[key] === value);
 }
-// Type-Safe Mutations
-// We take raw string parameters, map them into an object, and strongly type assert it as a `JournalEntry`.
-// If we were missing the timestamp, TypeScript's compiler would scream an error blocking the build.
+/**
+ * Validates and casts a raw string value into the Mood enum safely.
+ */
+function parseMood(moodString) {
+    if (Object.values(Mood).includes(moodString)) {
+        return moodString;
+    }
+    throw new Error(`Invalid mood value: "${moodString}"`);
+}
+/**
+ * Creates a new JournalEntry with all required fields enforced by the interface.
+ */
 export function addEntry(title, content, moodString) {
     const newEntry = {
         id: Date.now().toString(36) + Math.random().toString(36).substring(2),
         title: title,
         content: content,
-        mood: moodString, // TYPE ASSERTION: Tells TS to explicitly treat this string as our Enum 
+        mood: parseMood(moodString),
         timestamp: Date.now()
     };
-    currentJournal.unshift(newEntry); // Add to the top of the array
+    currentJournal.unshift(newEntry);
     saveEntries(currentJournal);
     return newEntry;
 }
+/**
+ * Updates an existing entry's fields by ID. Returns the updated entry or undefined if not found.
+ */
+export function updateEntry(id, title, content, moodString) {
+    const index = currentJournal.findIndex(entry => entry.id === id);
+    if (index === -1)
+        return undefined;
+    const updatedEntry = {
+        ...currentJournal[index],
+        title: title,
+        content: content,
+        mood: parseMood(moodString),
+    };
+    currentJournal[index] = updatedEntry;
+    saveEntries(currentJournal);
+    return updatedEntry;
+}
+/**
+ * Removes an entry by ID using the generic findByProperty utility.
+ */
 export function deleteEntry(id) {
-    // Requirement 2: Demonstrate using the Generic Function to find an item first
     const entryToDelete = findByProperty(currentJournal, "id", id);
     if (entryToDelete) {
         currentJournal = currentJournal.filter(entry => entry.id !== id);
         saveEntries(currentJournal);
     }
 }
+/**
+ * Filters entries by mood. Returns all if "ALL" is passed.
+ */
 export function getEntriesByMood(moodFilter) {
     if (moodFilter === "ALL")
         return currentJournal;
     return currentJournal.filter(entry => entry.mood === moodFilter);
+}
+/**
+ * Searches entries by matching title or content against a query string (case-insensitive).
+ */
+export function searchEntries(query) {
+    const q = query.toLowerCase().trim();
+    if (!q)
+        return currentJournal;
+    return currentJournal.filter(entry => entry.title.toLowerCase().includes(q) ||
+        entry.content.toLowerCase().includes(q));
 }
